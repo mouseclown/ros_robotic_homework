@@ -41,6 +41,7 @@ class Turtlebot():
         # Hint: If no path is received it is set to None in the constructor (path received) 
         # And also reset the current wp counter (you can set it to the closest point to the robot)
         self.path = msg
+        #initial variable definition
         k=0
         self.curr_wp = 0
         distance = 0
@@ -89,7 +90,7 @@ class Turtlebot():
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
                 rospy.loginfo("Problem TF")
                 return
-            
+            #we change the maximum angular rate and maximum velocity so that our magabot's encoders and IMU don't commit as much mistakes.
             angular = math.atan2(base_goal.point.y, base_goal.point.x)
             if math.fabs(angular)>0.3:
                 angular = 0.3*(angular/math.fabs(angular))
@@ -97,6 +98,7 @@ class Turtlebot():
                 linear = 0.15
             distance = math.sqrt((base_goal.point.x)**2 + (base_goal.point.y)**2)
             if distance < self.mindist:
+                #change the counter of the next waypoint so that it makes jumps of 5 os that control is smoother
                 self.curr_wp =self.curr_wp + 5 
                 if self.curr_wp >= len(self.path.poses):
                     self.curr_wp = len(self.path.poses) - 1
